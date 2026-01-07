@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure Backup Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00C853; /* Veeam Green-ish */
+            --secondary: #29313b;
+            --background: #f4f7fa;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-light: #888888;
+            --danger: #ff4d4f;
+            --warning: #faad14;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text-main);
+        }
+
+        header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .kpi-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-success { background: #e6ffed; color: #00C853; }
+        .status-error { background: #fff1f0; color: #ff4d4f; }
+        .status-warning { background: #fffbe6; color: #faad14; }
+
+        .section-title {
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Backup Compliance Report</h1>
+        <div>
+            Generated: <!-- TIMESTAMP_PLACEHOLDER -->
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- KPI Cards -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="kpi-value" style="color: var(--primary)"><!-- TOTAL_VMS_PLACEHOLDER --></div>
+                <div class="kpi-label">Total VMs</div>
+            </div>
+            <div class="card">
+                <div class="kpi-value" style="color: var(--primary)"><!-- PROTECTED_VMS_PLACEHOLDER --></div>
+                <div class="kpi-label">Protected VMs</div>
+            </div>
+            <div class="card">
+                <div class="kpi-value" style="color: var(--danger)"><!-- UNPROTECTED_VMS_PLACEHOLDER --></div>
+                <div class="kpi-label">Unprotected</div>
+            </div>
+            <div class="card">
+                <div class="kpi-value"><!-- SUCCESS_RATE_PLACEHOLDER -->%</div>
+                <div class="kpi-label">Success Rate (Last 24h)</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+            <div class="card">
+                <h3>Protection Coverage</h3>
+                <div class="chart-container">
+                    <canvas id="coverageChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Repository Usage</h3>
+                <div class="chart-container">
+                    <canvas id="storageChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unprotected VMs Table -->
+        <h2 class="section-title">Critical Attention: Unprotected VMs</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>VM Name</th>
+                        <th>Folder</th>
+                        <th>Cluster</th>
+                        <th>Power State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- UNPROTECTED_ROWS_PLACEHOLDER -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Job Status Table -->
+        <h2 class="section-title">Job Status (Last 24 Hours)</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Job Name</th>
+                        <th>Status</th>
+                        <th>Last Run</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JOB_ROWS_PLACEHOLDER -->
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <footer class="footer">
+        Confidential - Internal Use Only - Generated by Automated Backup Reporting Tool
+    </footer>
+
+    <script>
+        // Data Injection
+        const coverageData = {
+            protected: <!-- JS_PROTECTED_COUNT -->,
+            unprotected: <!-- JS_UNPROTECTED_COUNT -->
+        };
+
+        const storageData = {
+            labels: <!-- JS_REPO_LABELS -->,
+            data: <!-- JS_REPO_DATA -->
+        };
+
+        // Coverage Chart
+        new Chart(document.getElementById('coverageChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Protected', 'Unprotected'],
+                datasets: [{
+                    label: 'VM Count',
+                    data: [coverageData.protected, coverageData.unprotected],
+                    backgroundColor: ['#00C853', '#ff4d4f'],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Storage Chart
+        new Chart(document.getElementById('storageChart'), {
+            type: 'doughnut',
+            data: {
+                labels: storageData.labels,
+                datasets: [{
+                    data: storageData.data,
+                    backgroundColor: ['#29313b', '#00C853', '#faad14', '#1890ff']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+</body>
+</html>
