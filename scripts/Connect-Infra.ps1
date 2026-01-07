@@ -11,7 +11,15 @@ function Connect-Infrastructure {
     # Connect to vCenter
     Write-Host "Connecting to vCenter: $vCenterServer"
     # Check if already connected
-    if ($global:DefaultVIServer.Name -ne $vCenterServer) {
+
+    $shouldConnect = $true
+    if (Test-Path variable:global:DefaultVIServer) {
+        if ($global:DefaultVIServer.Name -eq $vCenterServer) {
+            $shouldConnect = $false
+        }
+    }
+
+    if ($shouldConnect) {
         try {
             Connect-VIServer -Server $vCenterServer -ErrorAction Stop | Out-Null
             Write-Host "Successfully connected to vCenter." -ForegroundColor Green
